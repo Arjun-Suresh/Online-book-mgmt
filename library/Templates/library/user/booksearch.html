@@ -7,9 +7,9 @@
 </head>
 <body>
 <h1>Please select an option</h1>
-<button class="smallerButtons" style="position:absolute;top:100px;left:20%;" onclick="location.href='Book search By ISBN.html';">Search by ISBN</button>
-<button class="smallerButtons" style="position:absolute;top:100px;right:20%;" onclick="location.href='Book search By Name.html';">Search by Name</button>
+<button class="smallerButtons" style="position:absolute;top:100px;left:20%;" onclick="location.href='{{request.path}}isbn/';">Search by ISBN</button>
+<button class="smallerButtons" style="position:absolute;top:100px;right:20%;" onclick="location.href='{{request.path}}title/';">Search by Title</button>
 <button class="logoutButton" onclick="location.href='/library/logout/';">Logout</button>
-<button class="smallerButtons" style="position:absolute;top:400px;left:35%;" onclick="location.href='page1.html';">Main Menu</button>
+<button class="smallerButtons" style="position:absolute;top:400px;left:35%;" onclick="/library/user/home/;">Main Menu</button>
 </body>
 </html>
