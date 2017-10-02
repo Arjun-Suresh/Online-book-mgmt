@@ -76,7 +76,56 @@ def userhome(request,arg='', context={}):
             return render(request, 'library/user/home.html', context)
     else:
         return redirectToPage(request,"Please Login to proceed", '/library/user/loginoption')
-    
+
+
+def userhistory(request,arg='', context={}):
+    if 'userEmail' in request.session and 'Password' in request.session:
+        if request.session['userEmail'] == '#' or request.session['Password'] == '#':
+            return redirectToPage(request,"Please Login to proceed", '/library/user/loginoption')
+        else:
+            request.session['visited']='true'
+            sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn in (select isbn from hasread where email = '"+request.session['userEmail']+"') and a.id = (select authorid from haswritten where isbn=b.isbn)"
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+                returnedVal=cursor.fetchall()
+            return render(request,"library/user/displaybookstitle.html", {'book':returnedVal})
+    else:
+        return redirectToPage(request,"Please Login to proceed", '/library/user/loginoption')
+
+
+def userrecommendation(request,arg='', context={}):
+    if 'userEmail' in request.session and 'Password' in request.session:
+        if request.session['userEmail'] == '#' or request.session['Password'] == '#':
+            return redirectToPage(request,"Please Login to proceed", '/library/user/loginoption')
+        else:
+            request.session['visited']='true'
+            bookList=['#']
+            
+            sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn not in (select isbn from hasread where email = '"+request.session['userEmail']+"') and a.id in (select authorid from likes where email = '"+request.session['userEmail']+"') and a.id = (select authorid from haswritten where isbn=b.isbn) limit 4"
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+                returnedVal1=cursor.fetchall()
+            for val in returnedVal1:
+                bookList.append(val)
+            valToShow = int((10-len(returnedVal1))/3+0.5)
+            sql="select authorid from likes group by authorid order by sum(visits) desc limit 3"
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+                popId=cursor.fetchall()
+
+            for autId in popId:
+                sql="select  b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn not in (select isbn from hasread where email = '"+request.session['userEmail']+"') and b.isbn in (select isbn from haswritten where id="+str(autId[0])+") and a.id=(select authorid from haswritten where isbn=b.isbn) limit "+str(valToShow)
+                with connection.cursor() as cursor:
+                    cursor.execute(sql)
+                    returnedVal2=cursor.fetchall()
+                for r in returnedVal2:
+                    bookList.append(r)
+                    
+            bookList.remove('#')
+            return render(request,"library/user/displaybookstitle.html", {'book':bookList})
+    else:
+        return redirectToPage(request,"Please Login to proceed", '/library/user/loginoption')
+
 
 def userauthenticate(request,arg=''):
     userEmail=request.POST.get("User_Email")
