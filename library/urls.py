@@ -43,6 +43,14 @@ urlpatterns = [
     url(r'^admin/login/auth$', views.adminauthenticate, name='adminauthenticate'),
     # ex: /library/admin/home
     url(r'^admin/home/$', views.adminhome, name='adminhome'),
+    # ex: /library/admin/UserRecord/
+    url(r'^admin/UserRecord/$', views.userrecord, name='userrecord'),
+    # ex: /library/admin/BookRecord/
+    url(r'^admin/BookRecord/$', views.bookrecord, name='bookrecord'),
+    # ex: /library/admin/TopReads/
+    url(r'^admin/TopReads/$', views.topReads, name='bookrecord'),
+    # ex: /library/admin/view/
+    url(r'^admin/TopReads/view/$', views.viewdetails, name='viewdetails'),
     # ex: /library/logout
     url(r'^logout/$', views.logout, name='logout'),
     # ex: /polls/5/results/

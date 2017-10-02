@@ -172,7 +172,7 @@ def usercheckisbn(request,arg=''):
         if isbn == None or request.session['userEmail'] == '#' or request.session['Password'] == '#':
             raise Http404        
         else:
-            sql="select a.authorname, b.title, b.link from author a,book b where id = (select authorid from haswritten where isbn='"+isbn+"') and b.isbn = '"+isbn+"'"
+            sql="select b.title, a.authorname, b.link from author a,book b where id = (select authorid from haswritten where isbn='"+isbn+"') and b.isbn = '"+isbn+"'"
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal = cursor.fetchone()
@@ -366,6 +366,81 @@ def adminhome(request,arg='', context={}):
             return render(request, 'library/admin/home.html', context)
     else:
         return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
+
+
+def userrecord(request,arg='', context={}):
+    if 'userEmail' in request.session and 'Password' in request.session and 'userType' in request.session:
+        if request.session['userEmail'] == '#' or request.session['Password'] == '#' or request.session['userType'] == '#':
+            return redirectToAdminLoginpage(request,"Please Login to proceed")
+        if request.session['userType'] != 'admin':
+            return HttpResponseForbidden()
+        else:
+            return render(request, 'library/admin/UserRecordHome.html', context)
+    else:
+        return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
+
+
+def bookrecord(request,arg='', context={}):
+    if 'userEmail' in request.session and 'Password' in request.session and 'userType' in request.session:
+        if request.session['userEmail'] == '#' or request.session['Password'] == '#' or request.session['userType'] == '#':
+            return redirectToAdminLoginpage(request,"Please Login to proceed")
+        if request.session['userType'] != 'admin':
+            return HttpResponseForbidden()
+        else:
+            return render(request, 'library/admin/BookRecordHome.html', context)
+    else:
+        return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
+
+
+def topReads(request,arg='', context={}):
+    if 'userEmail' in request.session and 'Password' in request.session and 'userType' in request.session:
+        if request.session['userEmail'] == '#' or request.session['Password'] == '#' or request.session['userType'] == '#':
+            return redirectToAdminLoginpage(request,"Please Login to proceed")
+        if request.session['userType'] != 'admin':
+            return HttpResponseForbidden()
+        else:
+            bookList=['#']
+            sql="select isbn from hasread group by isbn order by count(*) desc limit 8"
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+                isbnList=cursor.fetchall()
+
+            for isbn in isbnList:
+                sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where id = (select authorid from haswritten where isbn='"+isbn[0]+"') and b.isbn = '"+isbn[0]+"'"
+                with connection.cursor() as cursor:
+                    cursor.execute(sql)
+                    returnedVal2=cursor.fetchall()
+                for r in returnedVal2:
+                    bookList.append(r)
+                    
+            bookList.remove('#')
+            return render(request,"library/admin/TopReads.html", {'book':bookList})
+    else:
+        return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
+
+
+def viewdetails(request,arg=''):
+    isbn=request.POST.get("isbn")
+    if isbn == None:
+        return redirect('/library/admin/topReads')
+    if 'userEmail' in request.session and 'Password' in request.session and 'userType' in request.session:
+        if request.session['userEmail'] == '#' or request.session['Password'] == '#' or request.session['userType'] == '#':
+            return redirectToAdminLoginpage(request,"Please Login to proceed")
+        if request.session['userType'] != 'admin':
+            return HttpResponseForbidden()        
+        else:
+            sql="select a.authorname, b.title, b.link from author a,book b where id = (select authorid from haswritten where isbn='"+isbn+"') and b.isbn = '"+isbn+"'"
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+                returnedVal = cursor.fetchone()
+            author=returnedVal[0]
+            title=returnedVal[1]
+            link=returnedVal[2]
+            return render(request,"library/admin/displaybookdetails.html", {'title':title,'author':author,'isbn':isbn,'link':link})
+
+    else:
+        return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
+
 
 
 def logout(request,arg='',context={}):

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User options</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'library/Large Buttons.css' %}" />
+</head>
+<body>
+<h1>Book details</h1>
+<h2> Title: <br> </h2>
+<h3> {{title}} <br><br></h3>
+<h2> Author: <br> </h2>
+<h3> {{author}} <br><br></h3>
+<h2> ISBN: <br> </h2>
+<h3> {{isbn}} </h3>
+<button style="position:absolute;top:300px;left:10%;width: 200px; height:40px; color:green; background-color:rgb(140,200,53);	font-size:20px; font-weight:bold;" onclick="window.open('{{link}}');">Read</button>
+<button class="smallerButtons" style="position:absolute;top:400px;left:35%;" onclick="location.href='/library/admin/home/';">Main Menu</button>
+<button class="logoutButton"  onclick="location.href='/library/logout/';">Logout</button>
+</body>
+</html>
