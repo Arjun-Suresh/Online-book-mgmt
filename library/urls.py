@@ -13,69 +13,69 @@ urlpatterns = [
     url(r'^user/signup/checksignup/$', views.checksignup, name='checksignup'),    
     # ex: /library/user/login/
     url(r'^user/login/$', views.userlogin, name='userlogin'),
-    # ex: /library/user/login/auth
-    url(r'^user/login/auth$', views.userauthenticate, name='userauthenticate'),
-    # ex: /library/user/home
+    # ex: /library/user/login/auth/
+    url(r'^user/login/auth/$', views.userauthenticate, name='userauthenticate'),
+    # ex: /library/user/home/
     url(r'^user/home/$', views.userhome, name='userhome'),
-    # ex: /library/user/home/history
+    # ex: /library/user/home/history/
     url(r'^user/home/history/$', views.userhistory, name='userhistory'),
-    # ex: /library/user/home/recommendation
+    # ex: /library/user/home/recommendation/
     url(r'^user/home/recommendation/$', views.userrecommendation, name='userrecommendation'),
-    # ex: /library/user/booksearch
+    # ex: /library/user/booksearch/
     url(r'^user/booksearch/$', views.userbooksearch, name='booksearch'),
-    # ex: /library/user/booksearch/isbn
+    # ex: /library/user/booksearch/isbn/
     url(r'^user/booksearch/isbn/$', views.userbooksearchisbn, name='booksearchisbn'),
-    # ex: /library/user/booksearch/title
+    # ex: /library/user/booksearch/title/
     url(r'^user/booksearch/title/$', views.userbooksearchtitle, name='booksearchtitle'),
-    # ex: /library/user/booksearch/isbn/checkisbn
+    # ex: /library/user/booksearch/isbn/checkisbn/
     url(r'^user/booksearch/isbn/checkisbn/$', views.usercheckisbn, name='checkisbn'),
-    # ex: /library/user/booksearch/title/checktitle
+    # ex: /library/user/booksearch/title/checktitle/
     url(r'^user/booksearch/title/checktitle/$', views.userchecktitle, name='userchecktitle'),
-    # ex: /library/user/booksearch/proceed
+    # ex: /library/user/booksearch/proceed/
     url(r'^user/booksearch/proceed/$', views.booksearchproceed, name='booksearchproceed'),
-    # ex: /library/user/authorsearch
+    # ex: /library/user/authorsearch/
     url(r'^user/authorsearch/$', views.userauthorsearch, name='userauthorsearch'),
-    # ex: /library/user/booksearch/isbn/checkisbn
+    # ex: /library/user/booksearch/isbn/checkisbn/
     url(r'^user/authorsearch/checkauthor/$', views.usercheckauthor, name='usercheckauthor'),
     # ex: /library/admin/login/
     url(r'^admin/login/$', views.adminlogin, name='adminlogin'),
-    # ex: /library/admin/login/auth
-    url(r'^admin/login/auth$', views.adminauthenticate, name='adminauthenticate'),
-    # ex: /library/admin/home
+    # ex: /library/admin/login/auth/
+    url(r'^admin/login/auth/$', views.adminauthenticate, name='adminauthenticate'),
+    # ex: /library/admin/home/
     url(r'^admin/home/$', views.adminhome, name='adminhome'),
     # ex: /library/admin/UserRecord/
     url(r'^admin/UserRecord/$', views.userrecord, name='userrecord'),
     # ex: /library/admin/BookRecord/
     url(r'^admin/BookRecord/$', views.bookrecord, name='bookrecord'),
-    # ex: /library/admin/BookRecord/add
+    # ex: /library/admin/BookRecord/add/
     url(r'^admin/BookRecord/add/$', views.addbook, name='addbook'),
-    # ex: /library/admin/BookRecord/add/checknewbook
+    # ex: /library/admin/BookRecord/add/checknewbook/
     url(r'^admin/BookRecord/add/checknewbook/$', views.checknewbook, name='checknewbook'),
-    # ex: /library/admin/BookRecord/update
+    # ex: /library/admin/BookRecord/update/
     url(r'^admin/BookRecord/update/$', views.updatebook, name='updatebook'),
     # ex: /library/admin/BookRecord/update/updateForm/
     url(r'^admin/BookRecord/update/updateForm/$', views.bookUpdateForm, name='bookUpdateForm'),
-    # ex: /library/admin/BookRecord/update/updateForm/checkUpdate
+    # ex: /library/admin/BookRecord/update/updateForm/checkUpdate/
     url(r'^admin/BookRecord/update/updateForm/checkUpdate/$', views.performBookUpdate, name='performbookUpdate'),
-    # ex: /library/admin/BookRecord/delete
+    # ex: /library/admin/BookRecord/delete/
     url(r'^admin/BookRecord/delete/$', views.deletebook, name='deletebook'),
     # ex: /library/admin/BookRecord/delete/deleteBook/
     url(r'^admin/BookRecord/delete/deleteBook/$', views.performBookDelete, name='performBookDelete'),
-    # ex: /library/admin/UserRecord/add
+    # ex: /library/admin/UserRecord/add/
     url(r'^admin/UserRecord/add/$', views.adduser, name='adduser'),
-    # ex: /library/admin/UserRecord/add/checknewuser
+    # ex: /library/admin/UserRecord/add/checknewuser/
     url(r'^admin/UserRecord/add/checknewuser/$', views.checknewuser, name='checknewuser'),
-    # ex: /library/admin/UserRecord/update
+    # ex: /library/admin/UserRecord/update/
     url(r'^admin/UserRecord/update/$', views.updateuser, name='updateuser'),
     # ex: /library/admin/UserRecord/update/updateForm/
     url(r'^admin/UserRecord/update/updateForm/$', views.userUpdateForm, name='userUpdateForm'),
-    # ex: /library/admin/UserRecord/update/updateForm/checkUpdate
+    # ex: /library/admin/UserRecord/update/updateForm/checkUpdate/
     url(r'^admin/UserRecord/update/updateForm/checkUpdate/$', views.performUserUpdate, name='performUserUpdate'),
-    # ex: /library/admin/UserRecord/delete
+    # ex: /library/admin/UserRecord/delete/
     url(r'^admin/UserRecord/delete/$', views.deleteuser, name='deleteuser'),
     # ex: /library/admin/UserRecord/delete/deleteUser/
     url(r'^admin/UserRecord/delete/deleteUser/$', views.performUserDelete, name='performUserDelete'),
-    # ex: /library/admin/AuthorUpdate
+    # ex: /library/admin/AuthorUpdate/
     url(r'^admin/AuthorUpdate/$', views.updateauthor, name='updateauthor'),
     # ex: /library/admin/AuthorUpdate/updateForm/
     url(r'^admin/AuthorUpdate/updateForm/$', views.authorUpdateForm, name='authorUpdateForm'),
@@ -85,10 +85,8 @@ urlpatterns = [
     url(r'^admin/TopReads/$', views.topReads, name='bookrecord'),
     # ex: /library/admin/view/
     url(r'^admin/TopReads/view/$', views.viewdetails, name='viewdetails'),
-    # ex: /library/logout
+    # ex: /library/logout/
     url(r'^logout/$', views.logout, name='logout'),
-    # ex: /polls/5/results/
-    #url(r'^(?P<question_id>[0-9]+)/results/$', views.results, name='results'),
-    # ex: /polls/5/vote/
-    #url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
 ]
+
+handler404 = 'views.invalid page'
