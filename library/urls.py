@@ -47,6 +47,40 @@ urlpatterns = [
     url(r'^admin/UserRecord/$', views.userrecord, name='userrecord'),
     # ex: /library/admin/BookRecord/
     url(r'^admin/BookRecord/$', views.bookrecord, name='bookrecord'),
+    # ex: /library/admin/BookRecord/add
+    url(r'^admin/BookRecord/add/$', views.addbook, name='addbook'),
+    # ex: /library/admin/BookRecord/add/checknewbook
+    url(r'^admin/BookRecord/add/checknewbook/$', views.checknewbook, name='checknewbook'),
+    # ex: /library/admin/BookRecord/update
+    url(r'^admin/BookRecord/update/$', views.updatebook, name='updatebook'),
+    # ex: /library/admin/BookRecord/update/updateForm/
+    url(r'^admin/BookRecord/update/updateForm/$', views.bookUpdateForm, name='bookUpdateForm'),
+    # ex: /library/admin/BookRecord/update/updateForm/checkUpdate
+    url(r'^admin/BookRecord/update/updateForm/checkUpdate/$', views.performBookUpdate, name='performbookUpdate'),
+    # ex: /library/admin/BookRecord/delete
+    url(r'^admin/BookRecord/delete/$', views.deletebook, name='deletebook'),
+    # ex: /library/admin/BookRecord/delete/deleteBook/
+    url(r'^admin/BookRecord/delete/deleteBook/$', views.performBookDelete, name='performBookDelete'),
+    # ex: /library/admin/UserRecord/add
+    url(r'^admin/UserRecord/add/$', views.adduser, name='adduser'),
+    # ex: /library/admin/UserRecord/add/checknewuser
+    url(r'^admin/UserRecord/add/checknewuser/$', views.checknewuser, name='checknewuser'),
+    # ex: /library/admin/UserRecord/update
+    url(r'^admin/UserRecord/update/$', views.updateuser, name='updateuser'),
+    # ex: /library/admin/UserRecord/update/updateForm/
+    url(r'^admin/UserRecord/update/updateForm/$', views.userUpdateForm, name='userUpdateForm'),
+    # ex: /library/admin/UserRecord/update/updateForm/checkUpdate
+    url(r'^admin/UserRecord/update/updateForm/checkUpdate/$', views.performUserUpdate, name='performUserUpdate'),
+    # ex: /library/admin/UserRecord/delete
+    url(r'^admin/UserRecord/delete/$', views.deleteuser, name='deleteuser'),
+    # ex: /library/admin/UserRecord/delete/deleteUser/
+    url(r'^admin/UserRecord/delete/deleteUser/$', views.performUserDelete, name='performUserDelete'),
+    # ex: /library/admin/AuthorUpdate
+    url(r'^admin/AuthorUpdate/$', views.updateauthor, name='updateauthor'),
+    # ex: /library/admin/AuthorUpdate/updateForm/
+    url(r'^admin/AuthorUpdate/updateForm/$', views.authorUpdateForm, name='authorUpdateForm'),
+    # ex: /library/admin/AuthorUpdate/updateForm/checkUpdate/
+    url(r'^admin/AuthorUpdate/updateForm/checkUpdate/$', views.performAuthorUpdate, name='performAuthorUpdate'),
     # ex: /library/admin/TopReads/
     url(r'^admin/TopReads/$', views.topReads, name='bookrecord'),
     # ex: /library/admin/view/
