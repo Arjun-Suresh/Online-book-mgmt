@@ -779,7 +779,7 @@ def updateauthor(request,arg='', context={}):
 
 def authorUpdateForm(request,arg=''):
     authorid=request.POST.get("authorid")
-    if email == None:
+    if authorid == None:
         return redirect('/library/admin/AuthorUpdate')
     if 'userEmail' in request.session and 'Password' in request.session and 'userType' in request.session:
         if request.session['userEmail'] == '#' or request.session['Password'] == '#' or request.session['userType'] == '#':
@@ -787,26 +787,26 @@ def authorUpdateForm(request,arg=''):
         if request.session['userType'] != 'admin':
             return HttpResponseForbidden()        
         else:
-            sql="select authorname from users where id="+str(authorid)
+            sql="select authorname from author where id="+str(authorid)
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal = cursor.fetchone()
             authorname=returnedVal[0]
             request.session['authorEntry']=authorid
-            return render(request,"library/admin/updateFormUserDisplay.html", {'authorname':authorname})
+            return render(request,"library/admin/updateFormAuthorDisplay.html", {'authorname':authorname})
 
     else:
         return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
 
 
 
-def performUserUpdate(request,arg=''):
+def performAuthorUpdate(request,arg=''):
     authorname=request.POST.get("authorname")
-    if authorname == None or srequest.session['authorEntry'] == -1:
+    if authorname == None or request.session['authorEntry'] == -1:
         return redirect('/library/admin/AuthorUpdate/')
-    authorid=request.session['authorid']
+    authorid=request.session['authorEntry']
     request.session['authorEntry']=-1
-    sql = "update authors set authorname=%s, where id="+authorid
+    sql = "update author set authorname=%s where id="+authorid
     with connection.cursor() as cursor:
         cursor.execute(sql,(authorname))
     connection.commit()
