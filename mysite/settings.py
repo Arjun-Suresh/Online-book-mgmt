@@ -25,7 +25,7 @@ SECRET_KEY = '$490%ryy4j&ben=#(84qna9-el(yjzcxuux_qd1xt!(sj7syur'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['desolate-everglades-70182.herokuapp.com']
 
 
 # Application definition
