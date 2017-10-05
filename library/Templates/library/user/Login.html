@@ -9,7 +9,7 @@
 </head>
 <body>
 <h1>LOGIN</h1>
-<form name="LoginForm" action="{{request.path}}auth" method="POST">
+<form name="LoginForm" action="{{request.path}}auth/" method="POST">
 {% csrf_token %}
 <div style="position:absolute; top:200px; left:55%">
   <label for="useremail" style="font-weight:bold; font-size:20px;color:black;">USER EMAIL<br></label>

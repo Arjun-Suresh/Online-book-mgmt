@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Book Search by ISBN</title>
+<title>Top Reads</title>
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'library/BookTable.css' %}" />
 
@@ -23,7 +23,7 @@ function validateForm() {
 </script>
 </head>
 <body>
-<h1>List of Books</h1>
+<h1>Top reads</h1>
 <form name="Proceed" action="/library/admin/TopReads/view/" onsubmit="return validateForm()" method="POST">
 {% csrf_token %}
 <br><br><br><br>

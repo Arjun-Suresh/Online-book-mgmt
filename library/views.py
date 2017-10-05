@@ -392,7 +392,7 @@ def addbook(request,arg='', context={}):
     if 'userEmail' in request.session and 'Password' in request.session and 'userType' in request.session:
         if request.session['userEmail'] == '#' or request.session['Password'] == '#' or request.session['userType'] == '#':
             return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
-            if request.session['userType'] != 'admin':
+        if request.session['userType'] != 'admin':
             return HttpResponseForbidden()
         else:
             return render(request, 'library/admin/InsertBook.html', context)
@@ -665,7 +665,7 @@ def checknewuser(request,arg=''):
         connection.commit()
         return redirectToPage(request, "Successful insertion", "/library/admin/home/")
     else:
-        return redirectToPage(request, "email already present", '/library/admin/BookRecord/add')
+        return redirectToPage(request, "email already present", '/library/admin/UserRecord/add')
 
 
 #Displays list of users, with a select option

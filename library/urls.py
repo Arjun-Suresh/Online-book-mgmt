@@ -2,6 +2,8 @@ from django.conf.urls import url
 
 from . import views
 
+handler404 = 'views.invalid page'
+
 urlpatterns = [
     # ex: /library/
     url(r'^$', views.index, name='index'),
@@ -88,5 +90,3 @@ urlpatterns = [
     # ex: /library/logout/
     url(r'^logout/$', views.logout, name='logout'),
 ]
-
-handler404 = 'views.invalid page'
