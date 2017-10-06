@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Book modification options</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'library/Large Buttons.css' %}" />
+</head>
+<body>
+<h1>Please select an option</h1>
+<button class="smallerButtons" style="position:absolute;top:100px;left:20%;" onclick="location.href='{{request.path}}add/';">Add book</button>
+<button class="smallerButtons" style="position:absolute;top:100px;right:20%;" onclick="location.href='{{request.path}}update/';">Update book</button>
+<button class="smallerButtons" style="position:absolute;top:250px;left:35%;" onclick="location.href='{{request.path}}delete/';">Delete book</button>
+<button class="logoutButton" onclick="location.href='/library/logout/';">Logout</button>
+<button class="smallerButtons" style="position:absolute;top:400px;left:35%;" onclick="location.href='/library/admin/home/';">Main Menu</button>
+</body>
+</html>

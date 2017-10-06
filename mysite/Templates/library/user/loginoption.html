@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login/Signup</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'library/Large Buttons.css' %}" />
+</head>
+<body>
+<h1>Please select an option</h1>
+<button class="yellowButtons" style="position:absolute;top:200px;left:15%;" onclick="location.href='/library/user/login/';">Login</button>
+<button class="yellowButtons" style="position:absolute;top:300px;left:15%;" onclick="location.href='/library/user/signup/';">Sign Up</button>
+
+<p class="messages">
+{% if messages %}
+<ul class="messages" style="list-style: none;font-size: 200%;color:black;position:absolute;left:35%;top:500px">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+</p>
+</body>
+</html>

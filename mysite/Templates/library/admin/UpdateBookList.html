@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Book List</title>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'library/BookTable.css' %}" />
+
+<script>
+function validateForm() {
+    var chx = document.getElementsByTagName('input');
+  for (var i=0; i<chx.length; i++) {
+    // If you have more than one radio group, also check the name attribute
+    // for the one you want as in && chx[i].name == 'choose'
+    // Return true from the function on first match of a checked item
+    if (chx[i].type == 'radio' && chx[i].checked) {
+      return true;
+    } 
+  }
+  // End of the loop, return false
+  alert("Please select 1 book")
+  return false;
+}
+</script>
+</head>
+<body>
+<h1>List of Books</h1>
+<form name="Proceed" action="{{request.path}}updateForm/" onsubmit="return validateForm()" method="POST">
+{% csrf_token %}
+<br><br><br><br>
+<table class="minimalistBlack" style="height: 63px;" width="399">
+<thead>
+<tr>
+<th>Select</th>
+<th>Title</th>
+<th>Author</th>
+<th>Isbn</th>
+</tr>
+</thead>
+<tbody>
+{% for b in book %}
+<tr>
+<td width=2%><input type="radio" name="isbn" id="{{b.2}}" value="{{b.2}}"></td>
+<td>{{b.0}}</td>
+<td>{{b.1}}</td>
+<td>{{b.2}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<input type="submit" style="width:200px;height:50px; position:absolute;top:80px;left:40%" value="Proceed"/>
+</form>
+<button class="logoutButton" onclick="location.href='/library/logout/';">Logout</button>
+<button class="smallerButtons" style="position:absolute;top:10px;left:1%;" onclick="location.href='/library/admin/home/';">Main Menu</button>
+</body>
+</html>
