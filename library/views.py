@@ -16,6 +16,7 @@ connection = pymysql.connect(host=settings.DATABASES['default']['HOST'],
                              user=settings.DATABASES['default']['USER'],
                              password=settings.DATABASES['default']['PASSWORD'],
                              db=settings.DATABASES['default']['NAME'])
+connection.ping(True)
 
 
 
