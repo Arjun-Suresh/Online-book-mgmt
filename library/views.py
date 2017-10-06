@@ -88,7 +88,7 @@ def checksignup(request,arg=''):
     Password=request.POST.get("password")
     if userEmail == None or Password == None or userName == None:
         raise Http404
-    sql="SELECT * from users where email=%s"
+    sql="SELECT * from users where email='%s'"
     cursor=executeQuery(sql %(userEmail,),connection)
     returnedVal = cursor.fetchone()
     cursor.close()
