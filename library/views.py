@@ -110,8 +110,8 @@ def checksignup(request,arg=''):
         except:
             return redirectToUserLoginPage(request, "Please fill the details again", '/library/user/signup')
         cursor.close()
+        connection.commit()        
         closeConnection(connection)
-        connection.commit()
         request.session['userEmail']=userEmail
         request.session['Password']=Password
         request.session['userType']='normal'
@@ -312,10 +312,11 @@ def booksearchproceed(request,arg=''):
                     
                     cursor=executeQuery(sql,connection,request.session['userEmail'])
                     cursor.close()
-                    closeConnection(connection)
-                    connection.commit()
+                    
                 except:
                     print(isbn+' already present\n')
+                connection.commit()
+                closeConnection(connection)
                 sql="select authorid from haswritten where isbn='"+isbn+"'"
                 connection=createConnection()
                 cursor=executeQuery(sql,connection)
@@ -336,8 +337,8 @@ def booksearchproceed(request,arg=''):
                         
                         cursor=executeQuery(sql,connection,request.session['userEmail'])
                         cursor.close()
-                        closeConnection(connection)
                         connection.commit()
+                        closeConnection(connection)
                     except:
                         print("Error inserting into likes table\n")   #Internal error. Shouldn't be displayed to user
                 else:
@@ -345,8 +346,8 @@ def booksearchproceed(request,arg=''):
                     connection=createConnection()
                     cursor=executeQuery(sql,connection,request.session['userEmail'] )
                     cursor.close()
-                    closeConnection(connection)
                     connection.commit()
+                    closeConnection(connection)
             return render(request,"library/user/displaybookdetails.html", {'title':title,'author':author,'isbn':isbn,'link':link})
 
     else:
@@ -477,8 +478,8 @@ def checknewbook(request,arg=''):
             connection=createConnection()
             cursor=executeQuery(sql,connection)
             cursor.close()
-            closeConnection(connection)
             connection.commit()
+            closeConnection(connection)
         if link == None or link=="":
             base='http://aleph.gutenberg.org/'
             for i in range(len(gutid)-1):
@@ -496,9 +497,9 @@ def checknewbook(request,arg=''):
                     cursor=executeQuery(sql,connection,isbn,title,gutid,link)
                 except:
                     return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/add')
-                cursor.close()
-                closeConnection(connection)    
-                connection.commit()
+                cursor.close()    
+                connection.commit()                
+                closeConnection(connection)
         else:
             sql="INSERT into book (isbn,title,gutid,link) values(%s,%s,%s,%s)"
             connection=createConnection()
@@ -506,9 +507,9 @@ def checknewbook(request,arg=''):
                 cursor=executeQuery(sql,connection,isbn,title,"#",link)
             except:
                 return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/add')
-            cursor.close()
-            closeConnection(connection)    
+            cursor.close()    
             connection.commit()
+            closeConnection(connection)
         sql="select id from author where authorname=%s"
         connection=createConnection()
         cursor=executeQuery(sql,connection,author)
@@ -648,8 +649,8 @@ def performBookUpdate(request,arg=''):
         except:
             return redirectToPage(request, "Author not updated", "/library/admin/home")
         cursor.close()
-        closeConnection(connection)
         connection.commit()
+        closeConnection(connection)
         sql="select id from author where authorname=%s"
         connection=createConnection()
         cursor=executeQuery(sql,connection,existingAuthorName)
@@ -663,8 +664,8 @@ def performBookUpdate(request,arg=''):
         except:
             return redirectToPage(request, "Internal error", "/library/admin/home/")
         cursor.close()
-        closeConnection(connection)
         connection.commit()
+        closeConnection(connection)
     sql="update book set title=%s, gutid=%s, link=%s where isbn='"+isbn+"'"
     connection=createConnection()
     print(sql,connection,(title,gutid,link))
@@ -674,8 +675,8 @@ def performBookUpdate(request,arg=''):
     except:
         return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/update/updateForm')
     cursor.close()
+    connection.commit()    
     closeConnection(connection)
-    connection.commit()
     return redirectToPage(request, "Successful updation", "/library/admin/home/")
 
 
@@ -707,8 +708,8 @@ def performBookDelete(request,arg=''):
     connection=createConnection()
     cursor=executeQuery(sql,connection)
     cursor.close()
-    closeConnection(connection)
-    connection.commit()            
+    connection.commit()
+    closeConnection(connection)            
     return redirectToPage(request, "Successful deletion", "/library/admin/home/")
 
 
@@ -760,8 +761,8 @@ def checknewuser(request,arg=''):
         except:
             return redirectToPage(request, "Please fill the details again", '/library/admin/UserRecord/add')
         cursor.close()
-        closeConnection(connection)
         connection.commit()
+        closeConnection(connection)
         return redirectToPage(request, "Successful insertion", "/library/admin/home/")
     else:
         return redirectToPage(request, "email already present", '/library/admin/UserRecord/add')
@@ -825,8 +826,8 @@ def performUserUpdate(request,arg=''):
     connection=createConnection()
     cursor=executeQuery(sql,connection,email,username,password,oldEmailId)
     cursor.close()
-    closeConnection(connection)
     connection.commit()
+    closeConnection(connection)
     return redirectToPage(request, "Successful updation", "/library/admin/home/")
 
 
@@ -858,8 +859,8 @@ def performUserDelete(request,arg=''):
     connection=createConnection()
     cursor=executeQuery(sql,connection,email)
     cursor.close()
-    closeConnection(connection)
-    connection.commit()            
+    connection.commit() 
+    closeConnection(connection)           
     return redirectToPage(request, "Successful deletion", "/library/admin/home/")
 
 
