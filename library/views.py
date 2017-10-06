@@ -18,17 +18,17 @@ connection = pymysql.connect(host=settings.DATABASES['default']['HOST'],
                              db=settings.DATABASES['default']['NAME'])
 connection.ping(True)
 
-def executeQuery(sql,connection):    
+def executeQuery(sql,connection, *arg):    
         try:
             with connection.cursor() as cursor:
-                cursor.execute(sql)
+                cursor.execute(sql,arg)
         except pymysql.err.OperationalError:
             connection = pymysql.connect(host=settings.DATABASES['default']['HOST'],
                                  user=settings.DATABASES['default']['USER'],
                                  password=settings.DATABASES['default']['PASSWORD'],
                                  db=settings.DATABASES['default']['NAME'])
             with connection.cursor() as cursor:
-                cursor.execute(sql)
+                cursor.execute(sql,arg)
         return cursor
 
 
@@ -63,7 +63,7 @@ def userauthenticate(request,arg=''):
     if userEmail == None or Password == None:
         raise Http404
     sql="SELECT userpassword,userType from users where email='%s'"
-    cursor= executeQuery(sql %(userEmail),connection)
+    cursor= executeQuery(sql,connection,userEmail)
     returnParam = cursor.fetchone()
     cursor.close()
     if returnParam != None and returnParam[0] == Password:
@@ -89,13 +89,13 @@ def checksignup(request,arg=''):
     if userEmail == None or Password == None or userName == None:
         raise Http404
     sql="SELECT * from users where email='%s'"
-    cursor=executeQuery(sql %(userEmail,),connection)
+    cursor=executeQuery(sql,connection,userEmail)
     returnedVal = cursor.fetchone()
     cursor.close()
     if returnedVal == None:
         sql="INSERT into users values('%s','%s','%s','normal')"
         try:
-            cursor=executeQuery(sql %(userEmail,userName,Password),connection)
+            cursor=executeQuery(sql,connection,userEmail,userName,Password)
         except:
             return redirectToUserLoginPage(request, "Please fill the details again", '/library/user/signup')
         cursor.close()
@@ -128,7 +128,7 @@ def userhistory(request,arg='', context={}):
         else:
             request.session['visited']='true'
             sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn in (select isbn from hasread where email = '%s') and a.id = (select authorid from haswritten where isbn=b.isbn)"
-            cursor=executeQuery(sql %(request.session['userEmail']),connection)
+            cursor=executeQuery(sql,connection,request.session['userEmail'])
             returnedVal=cursor.fetchall()
             cursor.close()
             return render(request,"library/user/displaybookstitle.html", {'book':returnedVal})
@@ -148,7 +148,7 @@ def userrecommendation(request,arg='', context={}):
             bookList=['#'] #booklist.append doesn't allow appending to empty list. Appending a dummy variable. Need to change this.
             
             sql="select b.title, a.authorname, b.isbn, b.link,b.deleted from author a,book b where b.isbn not in (select isbn from hasread where email = '%s') and a.id in (select authorid from likes where email = '%s') and a.id = (select authorid from haswritten where isbn=b.isbn) and b.deleted='false' limit 4"
-            cursor=executeQuery(sql % (request.session['userEmail'],request.session['userEmail']),connection)
+            cursor=executeQuery(sql,connection, request.session['userEmail'],request.session['userEmail'])
             returnedVal1=cursor.fetchall()
             cursor.close()
             for val in returnedVal1:
@@ -161,7 +161,7 @@ def userrecommendation(request,arg='', context={}):
             for autId in popId:
                 sql="select  b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn not in (select isbn from hasread where email = '%s') and b.isbn in (select isbn from haswritten where id="+str(autId[0])+") and a.id=(select authorid from haswritten where isbn=b.isbn) and b.deleted='false' limit "+str(valToShow)
             
-                cursor=executeQuery(sql %(request.session['userEmail']),connection)
+                cursor=executeQuery(sql,connection,request.session['userEmail'])
                 returnedVal2=cursor.fetchall()
                 cursor.close()
                 for r in returnedVal2:
@@ -248,7 +248,7 @@ def userchecktitle(request,arg=''):
         else:
             sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.title= '%s' and b.isbn=h.isbn and h.authorid=a.id and b.deleted='false'"
     
-            cursor=executeQuery(sql %(title),connection)
+            cursor=executeQuery(sql,connection,title)
             returnedVal = cursor.fetchall()
             cursor.close()
             if returnedVal == None or len(returnedVal) == 0:
@@ -287,7 +287,7 @@ def booksearchproceed(request,arg=''):
                 sql="insert into hasread values(''%s'','"+isbn+"')"
                 try:
 
-                    cursor=executeQuery(sql % (request.session['userEmail']),connection)
+                    cursor=executeQuery(sql,connection,request.session['userEmail'])
                     cursor.close()
                     connection.commit()
                 except:
@@ -307,7 +307,7 @@ def booksearchproceed(request,arg=''):
                     sql="insert into likes values('%s',"+str(authorid)+",1)"
                     try:
 
-                        cursor=executeQuery(sql %(request.session['userEmail']),connection)
+                        cursor=executeQuery(sql,connection,request.session['userEmail'])
                         cursor.close()
                         connection.commit()
                     except:
@@ -315,7 +315,7 @@ def booksearchproceed(request,arg=''):
                 else:
                     sql="update likes set visits='"+str(int(visits[0])+1)+"' where email= '%s' and authorid="+str(authorid)
 
-                    cursor=executeQuery(sql %(request.session['userEmail']),connection )
+                    cursor=executeQuery(sql,connection,request.session['userEmail'] )
                     cursor.close()
                     connection.commit()
             return render(request,"library/user/displaybookdetails.html", {'title':title,'author':author,'isbn':isbn,'link':link})
@@ -345,7 +345,7 @@ def usercheckauthor(request,arg=''):
         else:
             sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.isbn=h.isbn and h.authorid=a.id and a.authorname='%s' and b.deleted ='false'"
 
-            cursor=executeQuery(sql %(author),connection)
+            cursor=executeQuery(sql,connection,author)
             returnedVal = cursor.fetchall()
             cursor.close()
             if returnedVal == None or len(returnedVal) == 0:
@@ -371,7 +371,7 @@ def adminauthenticate(request,arg=''):
         raise Http404
     sql="SELECT userpassword,usertype from users where email='%s'"
 
-    cursor=executeQuery(sql %(userEmail),connection)
+    cursor=executeQuery(sql,connection,userEmail)
     returnedList = cursor.fetchone()
     cursor.close()
     if returnedList != None and returnedList[0] == Password and returnedList[1]=='admin':
@@ -460,7 +460,7 @@ def checknewbook(request,arg=''):
                 sql="INSERT into book (isbn,title,gutid,link) values('%s','%s','%s','%s')"
             
                 try:
-                    cursor=executeQuery(sql %(isbn,title,gutid,link),connection)
+                    cursor=executeQuery(sql,connection,isbn,title,gutid,link)
                 except:
                     return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/add')
                     cursor.close()
@@ -469,14 +469,14 @@ def checknewbook(request,arg=''):
             sql="INSERT into book (isbn,title,gutid,link) values('%s','%s','%s','%s')"
             
             try:
-                cursor=executeQuery(sql %(isbn,title,"#",link),connection)
+                cursor=executeQuery(sql,connection,isbn,title,"#",link)
             except:
                 return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/add')
                 cursor.close()
             connection.commit()
         sql="select id from author where authorname='%s'"
     
-        cursor=executeQuery(sql %(author),connection)
+        cursor=executeQuery(sql,connection,author)
         authorList=cursor.fetchone()
         cursor.close()
         if authorList == None:
@@ -489,13 +489,13 @@ def checknewbook(request,arg=''):
             sql="INSERT into author values("+str(curId)+",'%s')"
             
             try:
-                cursor=executeQuery(sql %(author),connection)
+                cursor=executeQuery(sql,connection,author)
             except:
                 return redirectToPage(request, "Author not inserted", "/library/admin/home")
                 cursor.close()
         sql="select id from author where authorname='%s'"
     
-        cursor=executeQuery(sql %(author),connection)
+        cursor=executeQuery(sql,connection,author)
         authorList=cursor.fetchone()
         cursor.close()
         sql="INSERT into haswritten values('"+isbn+"',"+str(authorList[0])+")"
@@ -599,14 +599,14 @@ def performBookUpdate(request,arg=''):
         sql="INSERT into author values("+str(curId)+",'%s')"
     
         try:
-            cursor=executeQuery(sql %(author),connection)
+            cursor=executeQuery(sql,connection,author)
         except:
             return redirectToPage(request, "Author not updated", "/library/admin/home")
         cursor.close()
         connection.commit()
         sql="select id from author where authorname='%s'"
     
-        cursor=executeQuery(sql %(existingAuthorName),connection)
+        cursor=executeQuery(sql,connection,existingAuthorName)
         authorList=cursor.fetchone()
         cursor.close()
         sql="INSERT into haswritten values('"+isbn+"',"+str(authorList[0])+")"
@@ -621,7 +621,7 @@ def performBookUpdate(request,arg=''):
     print(sql,(title,gutid,link))
 
     try:
-        cursor=executeQuery(sql %(title,gutid,link),connection)
+        cursor=executeQuery(sql,connection,title,gutid,link)
     except:
         return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/update/updateForm')
     cursor.close()
@@ -703,7 +703,7 @@ def checknewuser(request,arg=''):
         sql="INSERT into users (email,username, userpassword,userType) values('%s','%s','%s','normal')"
     
         try:
-            cursor=executeQuery(sql %(email,userName,password),connection)
+            cursor=executeQuery(sql,connection,email,userName,password)
         except:
             return redirectToPage(request, "Please fill the details again", '/library/admin/UserRecord/add')
         cursor.close()
@@ -744,7 +744,7 @@ def userUpdateForm(request,arg=''):
         else:
             sql="select username, email, userpassword from users where email='%s'"
         
-            cursor=executeQuery(sql %(email),connection)
+            cursor=executeQuery(sql,connection,email)
             returnedVal = cursor.fetchone()
             cursor.close()
             username=returnedVal[0]
@@ -798,7 +798,7 @@ def performUserDelete(request,arg=''):
         return redirect('/library/admin/Userecord/delete')
     sql="delete from users where email='%s'"
 
-    cursor=executeQuery(sql %(email),connection)
+    cursor=executeQuery(sql,connection,email)
     cursor.close()
     connection.commit()            
     return redirectToPage(request, "Successful deletion", "/library/admin/home/")
