@@ -767,7 +767,7 @@ def performUserUpdate(request,arg=''):
     request.session['emailEntry']='#'
     sql = "update users set email=%s,username=%s,userpassword=%s where email=%s"
     
-    cursor=executeQuery(sql,connection %(email,username,password,oldEmailId))
+    cursor=executeQuery(sql,connection,email,username,password,oldEmailId)
     cursor.close()
     connection.commit()
     return redirectToPage(request, "Successful updation", "/library/admin/home/")
