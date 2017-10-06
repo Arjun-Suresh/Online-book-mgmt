@@ -73,7 +73,7 @@ def userauthenticate(request,arg=''):
     cursor= executeQuery(sql,connection,userEmail)
     returnParam = cursor.fetchone()
     cursor.close()
-    closeConnection()
+    closeConnection(connection)
     if returnParam != None and returnParam[0] == Password:
         request.session['userEmail']=userEmail
         request.session['Password']=Password
