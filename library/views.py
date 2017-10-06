@@ -27,7 +27,7 @@ def executeQuery(sql,connection, *arg):
         
         try:
             with connection.cursor() as cursor:
-                cursor.execute(sql,connection,arg)
+                cursor.execute(sql,arg)
         except pymysql.err.OperationalError:
             connection = pymysql.connect(host=settings.DATABASES['default']['HOST'],
                                  user=settings.DATABASES['default']['USER'],
