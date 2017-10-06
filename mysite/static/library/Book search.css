@@ -1,0 +1,37 @@
+body {
+    background-image: url("Images/BlueSky.jpg");
+	background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top;
+}
+h1 {
+	font-weight:bold;
+	text-align:center;
+	font-size:200%;
+	color:black;
+	}
+
+.yellowButtons{
+width:1000px;
+height:100px;
+background-color:rgb(222, 219, 42);
+color:green;
+font-weight:bold;
+font-size:60px;
+cursor: pointer;
+}
+
+.yellowButtons:hover {background-color: #e7e7e7;}
+
+.logoutButton{
+width:200px;
+height:40px;
+background-color:rgb(231,66,111);
+color:black;
+font-weight:bold;
+font-size:20px;
+cursor: pointer;
+position:absolute;
+top:25px;
+right:5%;
+}
