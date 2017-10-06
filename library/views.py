@@ -855,7 +855,7 @@ def performAuthorUpdate(request,arg=''):
     request.session['authorEntry']=-1
     sql = "update author set authorname=%s where id="+authorid
 
-    cursor=executeQuery(sql,connection %(authorname))
+    cursor=executeQuery(sql,connection,authorname)
     cursor.close()
     connection.commit()
     return redirectToPage(request, "Successful updation", "/library/admin/home/")
