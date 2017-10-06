@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import urllib
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -73,7 +74,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-urlparse.uses_netloc.append('mysql')
+urllib.parse.uses_netloc.append('mysql')
 
 try:
 
@@ -84,7 +85,7 @@ try:
         DATABASES = {}
 
     if 'DATABASE_URL' in os.environ:
-        url = urlparse.urlparse('mysql://bccdb0b58a9802:7ee543ed@us-cdbr-iron-east-05.cleardb.net/heroku_e9cedb276cb7f86')
+        url = urllib.parse.urlparse('mysql://bccdb0b58a9802:7ee543ed@us-cdbr-iron-east-05.cleardb.net/heroku_e9cedb276cb7f86')
 
         # Ensure default database exists.
         DATABASES['default'] = DATABASES.get('default', {})
