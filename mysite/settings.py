@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['desolate-everglades-70182.herokuapp.com']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -74,16 +73,36 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'onlinelibrary',
-        'USER': 'root',
-        'PASSWORD': 'Sql@2017',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
-}
+urlparse.uses_netloc.append('mysql')
+
+try:
+
+    # Check to make sure DATABASES is set in settings.py file.
+    # If not default to {}
+
+    if 'DATABASES' not in locals():
+        DATABASES = {}
+
+    if 'DATABASE_URL' in os.environ:
+        url = urlparse.urlparse('mysql://bccdb0b58a9802:7ee543ed@us-cdbr-iron-east-05.cleardb.net/heroku_e9cedb276cb7f86')
+
+        # Ensure default database exists.
+        DATABASES['default'] = DATABASES.get('default', {})
+
+        # Update with environment configuration.
+        DATABASES['default'].update({
+            'NAME': url.path[1:],
+            'USER': url.username,
+            'PASSWORD': url.password,
+            'HOST': url.hostname,
+            'PORT': url.port,
+        })
+
+
+        if url.scheme == 'mysql':
+            DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
+except Exception:
+    print 'Unexpected error:', sys.exc_info()
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
