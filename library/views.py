@@ -284,7 +284,7 @@ def booksearchproceed(request,arg=''):
                 request.session['visited']='false'
                 if deleted == 'true':
                     return render(request,"library/user/InvalidBook.html")
-                sql="insert into hasread values('%s','"+isbn+"')"
+                sql="insert into hasread values(%s,'"+isbn+"')"
                 try:
 
                     cursor=executeQuery(sql,connection,request.session['userEmail'])
