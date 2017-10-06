@@ -300,7 +300,7 @@ def booksearchproceed(request,arg=''):
                 authorid=returnedVal[0]
                 sql="select visits from likes where email = %s and authorid="+str(authorid)
             
-                cursor=executeQuery(sql  %(request.session['userEmail']),connection)
+                cursor=executeQuery(sql,connection,request.session['userEmail']))
                 visits=cursor.fetchone()
                 cursor.close()
                 if visits == None or len(visits)==0:
@@ -767,7 +767,7 @@ def performUserUpdate(request,arg=''):
     request.session['emailEntry']='#'
     sql = "update users set email=%s,username=%s,userpassword=%s where email=%s"
     
-    cursor=executeQuery(sql,connection %(email,username,password,oldEmailId))
+    cursor=executeQuery(sql,connection,email,username,password,oldEmailId)
     cursor.close()
     connection.commit()
     return redirectToPage(request, "Successful updation", "/library/admin/home/")
@@ -855,7 +855,7 @@ def performAuthorUpdate(request,arg=''):
     request.session['authorEntry']=-1
     sql = "update author set authorname=%s where id="+authorid
 
-    cursor=executeQuery(sql,connection %(authorname))
+    cursor=executeQuery(sql,connection,authorname)
     cursor.close()
     connection.commit()
     return redirectToPage(request, "Successful updation", "/library/admin/home/")
