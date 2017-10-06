@@ -20,14 +20,15 @@ connection.ping(True)
 
 def executeQuery(sql):    
         try:
-            cursor.execute(sql)
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
         except pymysql.err.OperationalError:
             connection = pymysql.connect(host=settings.DATABASES['default']['HOST'],
                                  user=settings.DATABASES['default']['USER'],
                                  password=settings.DATABASES['default']['PASSWORD'],
                                  db=settings.DATABASES['default']['NAME'])
-            
-            cursor.execute(sql)
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
         return cursor
 
 
