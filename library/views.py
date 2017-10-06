@@ -172,7 +172,7 @@ def userrecommendation(request,arg='', context={}):
             valToShow = int((10-len(returnedVal1))/3+0.5)
             sql="select authorid from likes group by authorid order by sum(visits) desc limit 3"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             popId=cursor.fetchall()
             cursor.close()
             closeConnection(connection)
@@ -232,7 +232,7 @@ def usercheckisbn(request,arg=''):
         else:
             sql="select b.title, a.authorname, b.link from author a,book b where id = (select authorid from haswritten where isbn='"+isbn+"') and b.isbn = '"+isbn+"' and b.deleted='false'"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal = cursor.fetchone()
             cursor.close()
             closeConnection(connection)
@@ -294,7 +294,7 @@ def booksearchproceed(request,arg=''):
         else:
             sql="select a.authorname, b.title, b.link, b.deleted from author a,book b where id = (select authorid from haswritten where isbn='"+isbn+"') and b.isbn = '"+isbn+"'"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal = cursor.fetchone()
             cursor.close()
             closeConnection(connection)
@@ -318,7 +318,7 @@ def booksearchproceed(request,arg=''):
                     print(isbn+' already present\n')
                 sql="select authorid from haswritten where isbn='"+isbn+"'"
                 connection=createConnection()
-                cursor=executeQuery(sql)
+                cursor=executeQuery(sql,connection)
                 returnedVal = cursor.fetchone()
                 cursor.close()
                 closeConnection(connection)
@@ -467,7 +467,7 @@ def checknewbook(request,arg=''):
         return redirect('/library/admin/BookRecord/add/')
     sql="SELECT * from book where isbn='"+isbn+"'"
     connection=createConnection()
-    cursor=executeQuery(sql)
+    cursor=executeQuery(sql,connection)
     returnedVal = cursor.fetchone()
     cursor.close()
     closeConnection(connection)
@@ -475,7 +475,7 @@ def checknewbook(request,arg=''):
         if returnedVal!= None and returnedVal[4] == "true":
             sql="delete from book where isbn='"+isbn+"'"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             cursor.close()
             closeConnection(connection)
             connection.commit()
@@ -518,7 +518,7 @@ def checknewbook(request,arg=''):
         if authorList == None:
             sql="select id from author order by ID desc limit 1"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             latestId=cursor.fetchone()
             cursor.close()
             closeConnection(connection)
@@ -540,7 +540,7 @@ def checknewbook(request,arg=''):
         sql="INSERT into haswritten values('"+isbn+"',"+str(authorList[0])+")"
         connection=createConnection()
         try:
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
         except:
             return redirectToPage(request, "Internal error", "/library/admin/home/")
         cursor.close()
@@ -561,7 +561,7 @@ def updatebook(request,arg='', context={}):
         else:
             sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where a.id = (select authorid from haswritten where isbn=b.isbn) and b.deleted='false'"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal=cursor.fetchall()
             cursor.close()
             closeConnection(connection)
@@ -583,7 +583,7 @@ def bookUpdateForm(request,arg=''):
         else:
             sql="select a.authorname, b.title, b.gutid, b.link from author a,book b where id = (select authorid from haswritten where isbn='"+isbn+"') and b.isbn = '"+isbn+"'"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal = cursor.fetchone()
             cursor.close()
             closeConnection(connection)
@@ -608,7 +608,7 @@ def performBookUpdate(request,arg=''):
         return redirect('/library/admin/BookRecord/update/')
     sql="SELECT * from book where isbn='"+isbn+"'"
     connection=createConnection()
-    cursor=executeQuery(sql)
+    cursor=executeQuery(sql,connection)
     returnedVal = cursor.fetchone()
     cursor.close()
     closeConnection(connection)
@@ -629,14 +629,14 @@ def performBookUpdate(request,arg=''):
         gutid='#'
     sql="select authorname from author where id=(select authorid from haswritten where isbn='"+isbn+"')"
     connection=createConnection()
-    cursor=executeQuery(sql)
+    cursor=executeQuery(sql,connection)
     existingAuthorName = cursor.fetchone()[0]
     cursor.close()
     closeConnection(connection)
     if existingAuthorName!=author :
         sql="select id from author order by ID desc limit 1"
         connection=createConnection()
-        cursor=executeQuery(sql)
+        cursor=executeQuery(sql,connection)
         latestId=cursor.fetchone()
         cursor.close()
         closeConnection(connection)
@@ -659,7 +659,7 @@ def performBookUpdate(request,arg=''):
         sql="INSERT into haswritten values('"+isbn+"',"+str(authorList[0])+")"
         connection=createConnection()
         try:
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
         except:
             return redirectToPage(request, "Internal error", "/library/admin/home/")
         cursor.close()
@@ -689,7 +689,7 @@ def deletebook(request,arg='', context={}):
         else:
             sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where a.id = (select authorid from haswritten where isbn=b.isbn)and b.deleted='false'"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal=cursor.fetchall()
             cursor.close()
             closeConnection(connection)
@@ -705,7 +705,7 @@ def performBookDelete(request,arg=''):
         return redirect('/library/admin/BookRecord/delete')
     sql="update book set deleted='true' where isbn='"+isbn+"'"
     connection=createConnection()
-    cursor=executeQuery(sql)
+    cursor=executeQuery(sql,connection)
     cursor.close()
     closeConnection(connection)
     connection.commit()            
@@ -748,7 +748,7 @@ def checknewuser(request,arg=''):
         return redirect('/library/admin/UserRecord/add/')
     sql="SELECT * from users where email='"+email+"'"
     connection=createConnection()
-    cursor=executeQuery(sql)
+    cursor=executeQuery(sql,connection)
     returnedVal = cursor.fetchone()
     cursor.close()
     closeConnection(connection)
@@ -777,7 +777,7 @@ def updateuser(request,arg='', context={}):
         else:
             sql="select username, email from users where userType='normal'"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal=cursor.fetchall()
             cursor.close()
             closeConnection(connection)
@@ -840,7 +840,7 @@ def deleteuser(request,arg='', context={}):
         else:
             sql="select username, email from users where userType='normal'"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal=cursor.fetchall()
             cursor.close()
             closeConnection(connection)
@@ -873,7 +873,7 @@ def updateauthor(request,arg='', context={}):
         else:
             sql="select authorname,id from author"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal=cursor.fetchall()
             cursor.close()
             closeConnection(connection)
@@ -895,7 +895,7 @@ def authorUpdateForm(request,arg=''):
         else:
             sql="select authorname from author where id="+str(authorid)
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal = cursor.fetchone()
             cursor.close()
             closeConnection(connection)
@@ -934,7 +934,7 @@ def topReads(request,arg='', context={}):
             bookList=['#']
             sql="select isbn from hasread group by isbn order by count(*) desc limit 8"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             isbnList=cursor.fetchall()
             cursor.close()
             closeConnection(connection)
@@ -942,7 +942,7 @@ def topReads(request,arg='', context={}):
             for isbn in isbnList:
                 sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where id = (select authorid from haswritten where isbn='"+isbn[0]+"') and b.isbn = '"+isbn[0]+"'"
                 connection=createConnection()
-                cursor=executeQuery(sql)
+                cursor=executeQuery(sql,connection)
                 returnedVal2=cursor.fetchall()
                 cursor.close()
                 closeConnection(connection)
@@ -967,7 +967,7 @@ def viewdetails(request,arg=''):
         else:
             sql="select a.authorname, b.title, b.link, b.deleted from author a,book b where id = (select authorid from haswritten where isbn='"+isbn+"') and b.isbn = '"+isbn+"'"
             connection=createConnection()
-            cursor=executeQuery(sql)
+            cursor=executeQuery(sql,connection)
             returnedVal = cursor.fetchone()
             cursor.close()
             closeConnection(connection)
