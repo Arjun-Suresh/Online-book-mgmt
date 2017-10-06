@@ -62,7 +62,7 @@ def userauthenticate(request,arg=''):
     Password=request.POST.get("User_Password")
     if userEmail == None or Password == None:
         raise Http404
-    sql="SELECT userpassword,userType from users where email=%s"
+    sql="SELECT userpassword,userType from users where email='%s'"
     cursor= executeQuery(sql %(userEmail),connection)
     returnParam = cursor.fetchone()
     cursor.close()
@@ -93,7 +93,7 @@ def checksignup(request,arg=''):
     returnedVal = cursor.fetchone()
     cursor.close()
     if returnedVal == None:
-        sql="INSERT into users values(%s,%s,%s,'normal')"
+        sql="INSERT into users values('%s','%s','%s','normal')"
         try:
             cursor=executeQuery(sql %(userEmail,userName,Password),connection)
         except:
@@ -127,7 +127,7 @@ def userhistory(request,arg='', context={}):
             return redirectToPage(request,"Please Login to proceed", '/library/user/loginoption')
         else:
             request.session['visited']='true'
-            sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn in (select isbn from hasread where email = %s) and a.id = (select authorid from haswritten where isbn=b.isbn)"
+            sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn in (select isbn from hasread where email = '%s') and a.id = (select authorid from haswritten where isbn=b.isbn)"
             cursor=executeQuery(sql %(request.session['userEmail']),connection)
             returnedVal=cursor.fetchall()
             cursor.close()
@@ -147,7 +147,7 @@ def userrecommendation(request,arg='', context={}):
             request.session['visited']='true'
             bookList=['#'] #booklist.append doesn't allow appending to empty list. Appending a dummy variable. Need to change this.
             
-            sql="select b.title, a.authorname, b.isbn, b.link,b.deleted from author a,book b where b.isbn not in (select isbn from hasread where email = %s) and a.id in (select authorid from likes where email = %s) and a.id = (select authorid from haswritten where isbn=b.isbn) and b.deleted='false' limit 4"
+            sql="select b.title, a.authorname, b.isbn, b.link,b.deleted from author a,book b where b.isbn not in (select isbn from hasread where email = '%s') and a.id in (select authorid from likes where email = '%s') and a.id = (select authorid from haswritten where isbn=b.isbn) and b.deleted='false' limit 4"
             cursor=executeQuery(sql % (request.session['userEmail'],request.session['userEmail']),connection)
             returnedVal1=cursor.fetchall()
             cursor.close()
@@ -159,7 +159,7 @@ def userrecommendation(request,arg='', context={}):
             popId=cursor.fetchall()
             cursor.close()
             for autId in popId:
-                sql="select  b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn not in (select isbn from hasread where email = %s) and b.isbn in (select isbn from haswritten where id="+str(autId[0])+") and a.id=(select authorid from haswritten where isbn=b.isbn) and b.deleted='false' limit "+str(valToShow)
+                sql="select  b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn not in (select isbn from hasread where email = '%s') and b.isbn in (select isbn from haswritten where id="+str(autId[0])+") and a.id=(select authorid from haswritten where isbn=b.isbn) and b.deleted='false' limit "+str(valToShow)
             
                 cursor=executeQuery(sql %(request.session['userEmail']),connection)
                 returnedVal2=cursor.fetchall()
@@ -246,7 +246,7 @@ def userchecktitle(request,arg=''):
         if title == None or request.session['userEmail'] == '#' or request.session['Password'] == '#':
             raise Http404        
         else:
-            sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.title= %s and b.isbn=h.isbn and h.authorid=a.id and b.deleted='false'"
+            sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.title= '%s' and b.isbn=h.isbn and h.authorid=a.id and b.deleted='false'"
     
             cursor=executeQuery(sql %(title),connection)
             returnedVal = cursor.fetchall()
@@ -284,7 +284,7 @@ def booksearchproceed(request,arg=''):
                 request.session['visited']='false'
                 if deleted == 'true':
                     return render(request,"library/user/InvalidBook.html")
-                sql="insert into hasread values('%s','"+isbn+"')"
+                sql="insert into hasread values(''%s'','"+isbn+"')"
                 try:
 
                     cursor=executeQuery(sql % (request.session['userEmail']),connection)
@@ -298,13 +298,13 @@ def booksearchproceed(request,arg=''):
                 returnedVal = cursor.fetchone()
                 cursor.close()
                 authorid=returnedVal[0]
-                sql="select visits from likes where email = %s and authorid="+str(authorid)
+                sql="select visits from likes where email = '%s' and authorid="+str(authorid)
             
                 cursor=executeQuery(sql  %(request.session['userEmail']),connection)
                 visits=cursor.fetchone()
                 cursor.close()
                 if visits == None or len(visits)==0:
-                    sql="insert into likes values(%s,"+str(authorid)+",1)"
+                    sql="insert into likes values('%s',"+str(authorid)+",1)"
                     try:
 
                         cursor=executeQuery(sql %(request.session['userEmail']),connection)
@@ -313,7 +313,7 @@ def booksearchproceed(request,arg=''):
                     except:
                         print("Error inserting into likes table\n")   #Internal error. Shouldn't be displayed to user
                 else:
-                    sql="update likes set visits='"+str(int(visits[0])+1)+"' where email= %s and authorid="+str(authorid)
+                    sql="update likes set visits='"+str(int(visits[0])+1)+"' where email= '%s' and authorid="+str(authorid)
 
                     cursor=executeQuery(sql %(request.session['userEmail']),connection )
                     cursor.close()
@@ -343,7 +343,7 @@ def usercheckauthor(request,arg=''):
         if author == None or request.session['userEmail'] == '#' or request.session['Password'] == '#':
             raise Http404        
         else:
-            sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.isbn=h.isbn and h.authorid=a.id and a.authorname=%s and b.deleted ='false'"
+            sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.isbn=h.isbn and h.authorid=a.id and a.authorname='%s' and b.deleted ='false'"
 
             cursor=executeQuery(sql %(author),connection)
             returnedVal = cursor.fetchall()
@@ -369,7 +369,7 @@ def adminauthenticate(request,arg=''):
     Password=request.POST.get("User_Password")
     if userEmail == None or Password == None:
         raise Http404
-    sql="SELECT userpassword,usertype from users where email=%s"
+    sql="SELECT userpassword,usertype from users where email='%s'"
 
     cursor=executeQuery(sql %(userEmail),connection)
     returnedList = cursor.fetchone()
@@ -457,7 +457,7 @@ def checknewbook(request,arg=''):
             print(base)
             if m != None:
                 link=base+'/'+m.group(0)
-                sql="INSERT into book (isbn,title,gutid,link) values(%s,%s,%s,%s)"
+                sql="INSERT into book (isbn,title,gutid,link) values('%s','%s','%s','%s')"
             
                 try:
                     cursor=executeQuery(sql %(isbn,title,gutid,link),connection)
@@ -466,7 +466,7 @@ def checknewbook(request,arg=''):
                     cursor.close()
                 connection.commit()
         else:
-            sql="INSERT into book (isbn,title,gutid,link) values(%s,%s,%s,%s)"
+            sql="INSERT into book (isbn,title,gutid,link) values('%s','%s','%s','%s')"
             
             try:
                 cursor=executeQuery(sql %(isbn,title,"#",link),connection)
@@ -474,7 +474,7 @@ def checknewbook(request,arg=''):
                 return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/add')
                 cursor.close()
             connection.commit()
-        sql="select id from author where authorname=%s"
+        sql="select id from author where authorname='%s'"
     
         cursor=executeQuery(sql %(author),connection)
         authorList=cursor.fetchone()
@@ -486,14 +486,14 @@ def checknewbook(request,arg=''):
             latestId=cursor.fetchone()
             cursor.close()
             curId=latestId[0]+1
-            sql="INSERT into author values("+str(curId)+",%s)"
+            sql="INSERT into author values("+str(curId)+",'%s')"
             
             try:
                 cursor=executeQuery(sql %(author),connection)
             except:
                 return redirectToPage(request, "Author not inserted", "/library/admin/home")
                 cursor.close()
-        sql="select id from author where authorname=%s"
+        sql="select id from author where authorname='%s'"
     
         cursor=executeQuery(sql %(author),connection)
         authorList=cursor.fetchone()
@@ -596,7 +596,7 @@ def performBookUpdate(request,arg=''):
         latestId=cursor.fetchone()
         cursor.close()
         curId=latestId[0]+1
-        sql="INSERT into author values("+str(curId)+",%s)"
+        sql="INSERT into author values("+str(curId)+",'%s')"
     
         try:
             cursor=executeQuery(sql %(author),connection)
@@ -604,7 +604,7 @@ def performBookUpdate(request,arg=''):
             return redirectToPage(request, "Author not updated", "/library/admin/home")
         cursor.close()
         connection.commit()
-        sql="select id from author where authorname=%s"
+        sql="select id from author where authorname='%s'"
     
         cursor=executeQuery(sql %(existingAuthorName),connection)
         authorList=cursor.fetchone()
@@ -617,7 +617,7 @@ def performBookUpdate(request,arg=''):
             return redirectToPage(request, "Internal error", "/library/admin/home/")
         cursor.close()
         connection.commit()
-    sql="update book set title=%s, gutid=%s, link=%s where isbn='"+isbn+"'"
+    sql="update book set title='%s', gutid='%s', link='%s' where isbn='"+isbn+"'"
     print(sql,(title,gutid,link))
 
     try:
@@ -700,7 +700,7 @@ def checknewuser(request,arg=''):
     returnedVal = cursor.fetchone()
     cursor.close()
     if returnedVal == None:
-        sql="INSERT into users (email,username, userpassword,userType) values(%s,%s,%s,'normal')"
+        sql="INSERT into users (email,username, userpassword,userType) values('%s','%s','%s','normal')"
     
         try:
             cursor=executeQuery(sql %(email,userName,password),connection)
@@ -742,7 +742,7 @@ def userUpdateForm(request,arg=''):
         if request.session['userType'] != 'admin':
             return HttpResponseForbidden()        
         else:
-            sql="select username, email, userpassword from users where email=%s"
+            sql="select username, email, userpassword from users where email='%s'"
         
             cursor=executeQuery(sql %(email),connection)
             returnedVal = cursor.fetchone()
@@ -765,7 +765,7 @@ def performUserUpdate(request,arg=''):
         return redirect('/library/admin/UserRecord/update/')
     oldEmailId = request.session['emailEntry']
     request.session['emailEntry']='#'
-    sql = "update users set email=%s,username=%s,userpassword=%s where email=%s"
+    sql = "update users set email='%s',username='%s',userpassword='%s' where email='%s'"
     
     cursor=executeQuery(sql,connection %(email,username,password,oldEmailId))
     cursor.close()
@@ -796,7 +796,7 @@ def performUserDelete(request,arg=''):
     email=request.POST.get("useremail")
     if email == None:
         return redirect('/library/admin/Userecord/delete')
-    sql="delete from users where email=%s"
+    sql="delete from users where email='%s'"
 
     cursor=executeQuery(sql %(email),connection)
     cursor.close()
@@ -853,7 +853,7 @@ def performAuthorUpdate(request,arg=''):
         return redirect('/library/admin/AuthorUpdate/')
     authorid=request.session['authorEntry']
     request.session['authorEntry']=-1
-    sql = "update author set authorname=%s where id="+authorid
+    sql = "update author set authorname='%s' where id="+authorid
 
     cursor=executeQuery(sql,connection %(authorname))
     cursor.close()
