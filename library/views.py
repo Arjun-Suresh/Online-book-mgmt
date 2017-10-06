@@ -54,6 +54,7 @@ def userauthenticate(request,arg=''):
     with connection.cursor() as cursor:
         cursor.execute(sql,(userEmail))
         returnParam = cursor.fetchone()
+        cursor.close()
     if returnParam != None and returnParam[0] == Password:
         request.session['userEmail']=userEmail
         request.session['Password']=Password
@@ -80,6 +81,7 @@ def checksignup(request,arg=''):
     with connection.cursor() as cursor:
         cursor.execute(sql,(userEmail))
         returnedVal = cursor.fetchone()
+        cursor.close()
     if returnedVal == None:
         sql="INSERT into users values(%s,%s,%s,'normal')"
         with connection.cursor() as cursor:
@@ -87,6 +89,7 @@ def checksignup(request,arg=''):
                 cursor.execute(sql,(userEmail,userName,Password))
             except:
                 return redirectToUserLoginPage(request, "Please fill the details again", '/library/user/signup')
+            cursor.close()
         connection.commit()
         request.session['userEmail']=userEmail
         request.session['Password']=Password
@@ -119,6 +122,7 @@ def userhistory(request,arg='', context={}):
             with connection.cursor() as cursor:
                 cursor.execute(sql,(request.session['userEmail']))
                 returnedVal=cursor.fetchall()
+                cursor.close()
             return render(request,"library/user/displaybookstitle.html", {'book':returnedVal})
     else:
         return redirectToPage(request,"Please Login to proceed", '/library/user/loginoption')
@@ -139,6 +143,7 @@ def userrecommendation(request,arg='', context={}):
             with connection.cursor() as cursor:
                 cursor.execute(sql,(request.session['userEmail'],request.session['userEmail']))
                 returnedVal1=cursor.fetchall()
+                cursor.close()
             for val in returnedVal1:
                 bookList.append(val)
             valToShow = int((10-len(returnedVal1))/3+0.5)
@@ -146,12 +151,13 @@ def userrecommendation(request,arg='', context={}):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 popId=cursor.fetchall()
-
+                cursor.close()
             for autId in popId:
                 sql="select  b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn not in (select isbn from hasread where email = %s) and b.isbn in (select isbn from haswritten where id="+str(autId[0])+") and a.id=(select authorid from haswritten where isbn=b.isbn) and b.deleted='false' limit "+str(valToShow)
                 with connection.cursor() as cursor:
                     cursor.execute(sql,(request.session['userEmail']))
                     returnedVal2=cursor.fetchall()
+                    cursor.close()
                 for r in returnedVal2:
                     flag=0
                     for b in bookList:
@@ -203,6 +209,7 @@ def usercheckisbn(request,arg=''):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal = cursor.fetchone()
+                cursor.close()
             if returnedVal == None:
                 return redirectToPage(request,"ISBN Not found.Please try again", '/library/user/booksearch/isbn/')
             else:                
@@ -237,6 +244,7 @@ def userchecktitle(request,arg=''):
             with connection.cursor() as cursor:
                 cursor.execute(sql,(title))
                 returnedVal = cursor.fetchall()
+                cursor.close()
             if returnedVal == None or len(returnedVal) == 0:
                 return redirectToPage(request,"Title Not found.Please try again", '/library/user/booksearch/title/')
             else:
@@ -261,6 +269,7 @@ def booksearchproceed(request,arg=''):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal = cursor.fetchone()
+                cursor.close()
             deleted=returnedVal[3]
             author=returnedVal[0]
             title=returnedVal[1]
@@ -273,6 +282,7 @@ def booksearchproceed(request,arg=''):
                 try:
                     with connection.cursor() as cursor:
                         cursor.execute(sql)
+                        cursor.close()
                     connection.commit()
                 except:
                     print(isbn+' already present\n')
@@ -280,16 +290,19 @@ def booksearchproceed(request,arg=''):
                 with connection.cursor() as cursor:
                     cursor.execute(sql)
                     returnedVal = cursor.fetchone()
+                    cursor.close()
                 authorid=returnedVal[0]
                 sql="select visits from likes where email = %s and authorid="+str(authorid)
                 with connection.cursor() as cursor:
-                        cursor.execute(sql,(request.session['userEmail']))
-                        visits=cursor.fetchone()
+                    cursor.execute(sql,(request.session['userEmail']))
+                    visits=cursor.fetchone()
+                    cursor.close()
                 if visits == None or len(visits)==0:
                     sql="insert into likes values(%s,"+str(authorid)+",1)"
                     try:
                         with connection.cursor() as cursor:
                             cursor.execute(sql,(request.session['userEmail']))
+                            cursor.close()
                         connection.commit()
                     except:
                         print("Error inserting into likes table\n")   #Internal error. Shouldn't be displayed to user
@@ -297,6 +310,7 @@ def booksearchproceed(request,arg=''):
                     sql="update likes set visits='"+str(int(visits[0])+1)+"' where email= %s and authorid="+str(authorid)
                     with connection.cursor() as cursor:
                         cursor.execute(sql,(request.session['userEmail']))
+                        cursor.close()
                     connection.commit()
             return render(request,"library/user/displaybookdetails.html", {'title':title,'author':author,'isbn':isbn,'link':link})
 
@@ -327,6 +341,7 @@ def usercheckauthor(request,arg=''):
             with connection.cursor() as cursor:
                 cursor.execute(sql,(author))
                 returnedVal = cursor.fetchall()
+                cursor.close()
             if returnedVal == None or len(returnedVal) == 0:
                 return redirectToPage(request,"Author not found.Please try again", '/library/user/authorsearch')
             else:
@@ -352,6 +367,7 @@ def adminauthenticate(request,arg=''):
     with connection.cursor() as cursor:
         cursor.execute(sql,(userEmail))
         returnedList = cursor.fetchone()
+        cursor.close()
     if returnedList != None and returnedList[0] == Password and returnedList[1]=='admin':
         request.session['userEmail']=userEmail
         request.session['Password']=Password
@@ -416,11 +432,13 @@ def checknewbook(request,arg=''):
     with connection.cursor() as cursor:
         cursor.execute(sql)
         returnedVal = cursor.fetchone()
+        cursor.close()
     if returnedVal == None or returnedVal[4] == "true":
         if returnedVal!= None and returnedVal[4] == "true":
             sql="delete from book where isbn='"+isbn+"'"
             with connection.cursor() as cursor:
                 cursor.execute(sql)
+                cursor.close()
             connection.commit()
         if link == None or link=="":
             base='http://aleph.gutenberg.org/'
@@ -439,6 +457,7 @@ def checknewbook(request,arg=''):
                         cursor.execute(sql,(isbn,title,gutid,link))
                     except:
                         return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/add')
+                    cursor.close()
                 connection.commit()
         else:
             sql="INSERT into book (isbn,title,gutid,link) values(%s,%s,%s,%s)"
@@ -447,16 +466,19 @@ def checknewbook(request,arg=''):
                     cursor.execute(sql,(isbn,title,"#",link))
                 except:
                     return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/add')
+                cursor.close()
             connection.commit()
         sql="select id from author where authorname=%s"
         with connection.cursor() as cursor:
             cursor.execute(sql,(author))
             authorList=cursor.fetchone()
+            cursor.close()
         if authorList == None:
             sql="select id from author order by ID desc limit 1"
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 latestId=cursor.fetchone()
+                cursor.close()
             curId=latestId[0]+1
             sql="INSERT into author values("+str(curId)+",%s)"
             with connection.cursor() as cursor:
@@ -464,16 +486,19 @@ def checknewbook(request,arg=''):
                     cursor.execute(sql,(author))
                 except:
                     return redirectToPage(request, "Author not inserted", "/library/admin/home")
+                cursor.close()
         sql="select id from author where authorname=%s"
         with connection.cursor() as cursor:
             cursor.execute(sql,(author))
             authorList=cursor.fetchone()
+            cursor.close()
         sql="INSERT into haswritten values('"+isbn+"',"+str(authorList[0])+")"
         with connection.cursor() as cursor:
             try:
                 cursor.execute(sql)
             except:
                 return redirectToPage(request, "Internal error", "/library/admin/home/")
+            cursor.close()
         return redirectToPage(request, "Successful insertion", "/library/admin/home/")
     else:
         return redirectToPage(request, "ISBN already present", '/library/admin/BookRecord/add')
@@ -492,6 +517,7 @@ def updatebook(request,arg='', context={}):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal=cursor.fetchall()
+                cursor.close()
             return render(request,"library/admin/UpdateBookList.html", {'book':returnedVal})
     else:
         return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
@@ -512,6 +538,7 @@ def bookUpdateForm(request,arg=''):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal = cursor.fetchone()
+                cursor.close()
             author=returnedVal[0]
             title=returnedVal[1]
             gutid=returnedVal[2]
@@ -535,6 +562,7 @@ def performBookUpdate(request,arg=''):
     with connection.cursor() as cursor:
         cursor.execute(sql)
         returnedVal = cursor.fetchone()
+        cursor.close()
     existingGutId=returnedVal[2]
     existingLink=returnedVal[3]
     if existingGutId != gutid:
@@ -554,11 +582,13 @@ def performBookUpdate(request,arg=''):
     with connection.cursor() as cursor:
         cursor.execute(sql)
         existingAuthorName = cursor.fetchone()[0]
+        cursor.close()
     if existingAuthorName!=author :
         sql="select id from author order by ID desc limit 1"
         with connection.cursor() as cursor:
             cursor.execute(sql)
             latestId=cursor.fetchone()
+            cursor.close()
         curId=latestId[0]+1
         sql="INSERT into author values("+str(curId)+",%s)"
         with connection.cursor() as cursor:
@@ -566,17 +596,20 @@ def performBookUpdate(request,arg=''):
                 cursor.execute(sql,(author))
             except:
                 return redirectToPage(request, "Author not updated", "/library/admin/home")
+            cursor.close()
         connection.commit()
         sql="select id from author where authorname=%s"
         with connection.cursor() as cursor:
             cursor.execute(sql,(existingAuthorName))
             authorList=cursor.fetchone()
+            cursor.close()
         sql="INSERT into haswritten values('"+isbn+"',"+str(authorList[0])+")"
         with connection.cursor() as cursor:
             try:
                 cursor.execute(sql)
             except:
                 return redirectToPage(request, "Internal error", "/library/admin/home/")
+            cursor.close()
         connection.commit()
     sql="update book set title=%s, gutid=%s, link=%s where isbn='"+isbn+"'"
     print(sql,(title,gutid,link))
@@ -585,6 +618,7 @@ def performBookUpdate(request,arg=''):
             cursor.execute(sql,(title,gutid,link))
         except:
             return redirectToPage(request, "Please fill the details again", '/library/admin/BookRecord/update/updateForm')
+        cursor.close()
     connection.commit()
     return redirectToPage(request, "Successful updation", "/library/admin/home/")
 
@@ -601,6 +635,7 @@ def deletebook(request,arg='', context={}):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal=cursor.fetchall()
+                cursor.close()
             return render(request,"library/admin/DeleteBookList.html", {'book':returnedVal})
     else:
         return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
@@ -614,6 +649,7 @@ def performBookDelete(request,arg=''):
     sql="update book set deleted='true' where isbn='"+isbn+"'"
     with connection.cursor() as cursor:
         cursor.execute(sql)
+        cursor.close()
     connection.commit()            
     return redirectToPage(request, "Successful deletion", "/library/admin/home/")
 
@@ -656,6 +692,7 @@ def checknewuser(request,arg=''):
     with connection.cursor() as cursor:
         cursor.execute(sql)
         returnedVal = cursor.fetchone()
+        cursor.close()
     if returnedVal == None:
         sql="INSERT into users (email,username, userpassword,userType) values(%s,%s,%s,'normal')"
         with connection.cursor() as cursor:
@@ -663,6 +700,7 @@ def checknewuser(request,arg=''):
                 cursor.execute(sql,(email,userName,password))
             except:
                 return redirectToPage(request, "Please fill the details again", '/library/admin/UserRecord/add')
+            cursor.close()
         connection.commit()
         return redirectToPage(request, "Successful insertion", "/library/admin/home/")
     else:
@@ -681,6 +719,7 @@ def updateuser(request,arg='', context={}):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal=cursor.fetchall()
+                cursor.close()
             return render(request,"library/admin/UpdateUserList.html", {'users':returnedVal})
     else:
         return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
@@ -701,6 +740,7 @@ def userUpdateForm(request,arg=''):
             with connection.cursor() as cursor:
                 cursor.execute(sql,(email))
                 returnedVal = cursor.fetchone()
+                cursor.close()
             username=returnedVal[0]
             password=returnedVal[2]
             request.session['emailEntry']=email
@@ -722,6 +762,7 @@ def performUserUpdate(request,arg=''):
     sql = "update users set email=%s,username=%s,userpassword=%s where email=%s"
     with connection.cursor() as cursor:
         cursor.execute(sql,(email,username,password,oldEmailId))
+        cursor.close()
     connection.commit()
     return redirectToPage(request, "Successful updation", "/library/admin/home/")
 
@@ -738,6 +779,7 @@ def deleteuser(request,arg='', context={}):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal=cursor.fetchall()
+                cursor.close()
             return render(request,"library/admin/DeleteUserList.html", {'users':returnedVal})
     else:
         return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
@@ -751,6 +793,7 @@ def performUserDelete(request,arg=''):
     sql="delete from users where email=%s"
     with connection.cursor() as cursor:
         cursor.execute(sql,(email))
+        cursor.close()
     connection.commit()            
     return redirectToPage(request, "Successful deletion", "/library/admin/home/")
 
@@ -767,6 +810,7 @@ def updateauthor(request,arg='', context={}):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal=cursor.fetchall()
+                cursor.close()
             return render(request,"library/admin/UpdateAuthorList.html", {'authors':returnedVal})
     else:
         return redirectToPage(request,"Please Login to proceed", '/library/admin/login')
@@ -787,6 +831,7 @@ def authorUpdateForm(request,arg=''):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal = cursor.fetchone()
+                cursor.close()
             authorname=returnedVal[0]
             request.session['authorEntry']=authorid
             return render(request,"library/admin/updateFormAuthorDisplay.html", {'authorname':authorname})
@@ -805,6 +850,7 @@ def performAuthorUpdate(request,arg=''):
     sql = "update author set authorname=%s where id="+authorid
     with connection.cursor() as cursor:
         cursor.execute(sql,(authorname))
+        cursor.close()
     connection.commit()
     return redirectToPage(request, "Successful updation", "/library/admin/home/")
 
@@ -822,12 +868,14 @@ def topReads(request,arg='', context={}):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 isbnList=cursor.fetchall()
+                cursor.close()
 
             for isbn in isbnList:
                 sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where id = (select authorid from haswritten where isbn='"+isbn[0]+"') and b.isbn = '"+isbn[0]+"'"
                 with connection.cursor() as cursor:
                     cursor.execute(sql)
                     returnedVal2=cursor.fetchall()
+                    cursor.close()
                 for r in returnedVal2:
                     bookList.append(r)
                     
@@ -851,6 +899,7 @@ def viewdetails(request,arg=''):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 returnedVal = cursor.fetchone()
+                cursor.close()
             author=returnedVal[0]
             title=returnedVal[1]
             link=returnedVal[2]
