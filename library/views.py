@@ -108,7 +108,7 @@ def checksignup(request,arg=''):
         try:
             cursor=executeQuery(sql,connection,userEmail,userName,Password)
         except:
-            return redirectToUserLoginPage(request, "Please fill the details again", '/library/user/signup')
+            return redirectToPage(request, "Email already present. Try with a different one.", '/library/user/signup')
         cursor.close()
         connection.commit()        
         closeConnection(connection)
@@ -142,6 +142,24 @@ def userhistory(request,arg='', context={}):
             sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where b.isbn in (select isbn from hasread where email = %s) and a.id = (select authorid from haswritten where isbn=b.isbn)"
             connection=createConnection()
             cursor=executeQuery(sql,connection,request.session['userEmail'])
+            returnedVal=cursor.fetchall()
+            cursor.close()
+            closeConnection(connection)
+            return render(request,"library/user/displaybookstitle.html", {'book':returnedVal})
+    else:
+        return redirectToPage(request,"Please Login to proceed", '/library/user/loginoption')
+
+
+#Display all books
+def viewall(request,arg='', context={}):
+    if 'userEmail' in request.session and 'Password' in request.session:
+        if request.session['userEmail'] == '#' or request.session['Password'] == '#':
+            return redirectToPage(request,"Please Login to proceed", '/library/user/loginoption')
+        else:
+            request.session['visited']='true'
+            sql="select b.title, a.authorname, b.isbn, b.link from author a,book b where a.id = (select authorid from haswritten where isbn=b.isbn)"
+            connection=createConnection()
+            cursor=executeQuery(sql,connection)
             returnedVal=cursor.fetchall()
             cursor.close()
             closeConnection(connection)

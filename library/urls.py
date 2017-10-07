@@ -21,6 +21,8 @@ urlpatterns = [
     url(r'^user/home/$', views.userhome, name='userhome'),
     # ex: /library/user/home/history/
     url(r'^user/home/history/$', views.userhistory, name='userhistory'),
+    # ex: /library/user/home/view/
+    url(r'^user/home/view/$', views.viewall, name='viewall'),
     # ex: /library/user/home/recommendation/
     url(r'^user/home/recommendation/$', views.userrecommendation, name='userrecommendation'),
     # ex: /library/user/booksearch/

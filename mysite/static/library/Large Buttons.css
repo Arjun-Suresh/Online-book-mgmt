@@ -53,6 +53,21 @@ left:5%;
 
 .historyButton:hover {background-color: rgb(221, 105, 115)}
 
+.viewButton{
+width:200px;
+height:40px;
+background-color:rgb(231,66,111);
+color:black;
+font-weight:bold;
+font-size:20px;
+cursor: pointer;
+position:absolute;
+top:25px;
+left:45%;
+}
+
+..viewButton:hover {background-color: rgb(221, 105, 115)}
+
 .smallerButtons{
 width:400px;
 height:100px;
