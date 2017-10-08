@@ -18,7 +18,7 @@ This particular application has been deployed in heroku and is currently running
 Setting it up on the local system:
 1. Clone the repository
 2. Ensure you have MYSQL 5.7 or above installed on the system. Import the .sql file into mysql provided under db folder
-3. In the __init.py__, set DATABASE_URL_CONSTANT global variable. Format for this global variable is 'mysql://username:password@hostname/databaseName
+3. In the __init.py__ under mysite subfolder, set DATABASE_URL_CONSTANT global variable. Format for this global variable is 'mysql://username:password@hostname/databaseName
 4. Also, set ALLOWED_HOSTS_CONSTANT to '127.0.0.1'
 5. In command prompt, navigate to mysite folder and enter the command 'python manage.py runserver'
 6. The app would be hosted at '127.0.0.1:8000/library/'
