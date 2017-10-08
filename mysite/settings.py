@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import urllib
-
+from mysite import DATABASE_URL_CONSTANT
+from mysite import ALLOWED_HOSTS_CONSTANT
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -47,7 +48,7 @@ SECRET_KEY = '$490%ryy4j&ben=#(84qna9-el(yjzcxuux_qd1xt!(sj7syur'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['desolate-everglades-70182.herokuapp.com']
+ALLOWED_HOSTS = [ALLOWED_HOSTS_CONSTANT]
 
 # Application definition
 
@@ -106,24 +107,23 @@ try:
     if 'DATABASES' not in locals():
         DATABASES = {}
 
-    if 'DATABASE_URL' in os.environ:
-        url = urllib.parse.urlparse('mysql://bccdb0b58a9802:7ee543ed@us-cdbr-iron-east-05.cleardb.net/heroku_e9cedb276cb7f86')
+    url = urllib.parse.urlparse(DATABASE_URL_CONSTANT)
 
-        # Ensure default database exists.
-        DATABASES['default'] = DATABASES.get('default', {})
+    # Ensure default database exists.
+    DATABASES['default'] = DATABASES.get('default', {})
 
-        # Update with environment configuration.
-        DATABASES['default'].update({
-            'NAME': url.path[1:],
-            'USER': url.username,
-            'PASSWORD': url.password,
-            'HOST': url.hostname,
-            'PORT': url.port,
-        })
+    # Update with environment configuration.
+    DATABASES['default'].update({
+        'NAME': url.path[1:],
+        'USER': url.username,
+        'PASSWORD': url.password,
+        'HOST': url.hostname,
+        'PORT': url.port,
+    })
 
 
-        if url.scheme == 'mysql':
-            DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
+    if url.scheme == 'mysql':
+        DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
 except Exception:
     print ('Unexpected error:'+sys.exc_info())
 
