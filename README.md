@@ -23,3 +23,7 @@ Setting it up on the local system:
 5. In command prompt, navigate to mysite folder and enter the command 'python manage.py runserver'
 6. The app would be hosted at '127.0.0.1:8000/library/'
 7. Try admin login with user email: 'arjun.sureshn2000@gmail.com' and password: 'Password'
+
+
+Notes:
+For this project, I haven't used django models, but directly executed sql queries from python using pymysql package. This is because of the class project requirement.
