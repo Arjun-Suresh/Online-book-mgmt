@@ -284,8 +284,9 @@ def userchecktitle(request,arg=''):
         if title == None or request.session['userEmail'] == '#' or request.session['Password'] == '#':
             raise Http404        
         else:
-            sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.title= %s and b.isbn=h.isbn and h.authorid=a.id and b.deleted='false'"
+            sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.title like %s and b.isbn=h.isbn and h.authorid=a.id and b.deleted='false'"
             connection=createConnection()
+            title='%'+title+'%'
             cursor=executeQuery(sql,connection,title)
             returnedVal = cursor.fetchall()
             cursor.close()
@@ -391,8 +392,9 @@ def usercheckauthor(request,arg=''):
         if author == None or request.session['userEmail'] == '#' or request.session['Password'] == '#':
             raise Http404        
         else:
-            sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.isbn=h.isbn and h.authorid=a.id and a.authorname=%s and b.deleted ='false'"
+            sql="select b.title, a.authorname, b.isbn, b.link from book b, author a, haswritten h where b.isbn=h.isbn and h.authorid=a.id and a.authorname like %s and b.deleted ='false'"
             connection=createConnection()
+            author='%'+author+'%'
             cursor=executeQuery(sql,connection,author)
             returnedVal = cursor.fetchall()
             cursor.close()
