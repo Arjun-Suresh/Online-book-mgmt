@@ -15,6 +15,16 @@ Deployment:
 This particular application has been deployed in heroku and is currently running in the url: https://desolate-everglades-70182.herokuapp.com/library
 
 
+Requirements:
+1. Python 3.4 or above (https://www.python.org/)
+2. pip (run python get-pip.py from the folder containing get-pip.py)
+3. Django 1.11.5 or higher (pip install django)
+4. pymysql 0.7.11 (pip install pymysql)
+5. urllib3 1.22 (pip install urllib3)
+6. requests 2.18.4 (pip install requests)
+7. MYSQL 5.7 or higher
+
+
 Setting it up on the local system:
 1. Clone the repository
 2. Ensure you have MYSQL 5.7 or above installed on the system. Import the .sql file into mysql provided under db folder
