@@ -28,11 +28,11 @@ Requirements:
 Setting it up on the local system:
 1. Clone the repository
 2. Ensure you have MYSQL 5.7 or above installed on the system. Run CREATE DATABASE databaseName command in mysql. Import the .sql file into mysql provided under db folder, after selecting the database you created earlier.
-3. In the __init.py__ under mysite subfolder, set DATABASE_URL_CONSTANT global variable. Format for this global variable is 'mysql://username:password@hostname/databaseName
-4. Also, set ALLOWED_HOSTS_CONSTANT to '127.0.0.1'
-5. In command prompt, navigate to the project folder and enter the command 'python manage.py runserver'
-6. The app would be hosted at '127.0.0.1:8000/library/'
-7. Try admin login with user email: 'arjun.sureshn2000@gmail.com' and password: 'Password'. You can also try inserting a user of type 'admin' into the database created earlier. The insert statement would resemble 'INSERT INTO users
+3. In the DatabaseConnection.txt, reset the username, password, hostname and the databasename parameters.
+4. In command prompt, navigate to the project folder and enter the command 'python manage.py runserver'
+5. The app would be hosted at '127.0.0.1:8000/library/'
+6. Try admin login with user email: 'arjun.sureshn2000@gmail.com' and password: 'Password'. 
+7. You can also try inserting a user of type 'admin' into the database created earlier. The insert statement would resemble 'INSERT INTO users(email, username, userpassword, usertype) values(admin@email, Administrator, password, admin)'
 
 
 Notes:

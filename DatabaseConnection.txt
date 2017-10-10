@@ -1,0 +1,4 @@
+UserName:root
+Password:password
+DatabaseName:onlinelibrary
+HostName:127.0.0.1
