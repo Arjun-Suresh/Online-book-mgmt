@@ -1,4 +1,4 @@
-# Online-book-management
+# Online book management system
 
 Introduction:
 This application is an online library application, which helps the user to read a subset of e-books stored in Project Gutenberg's e-book storage site. Project Gutenberg is an initiative to provide access to the world of e-books for all internet users. Currently, all the books stored in this particular application's database point to the corresponding book in Project Gutengerg's site, and I would like to give all due credit to the initiative.
